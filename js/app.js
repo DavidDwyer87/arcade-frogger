@@ -1,6 +1,8 @@
 var width = 101;
 var height = 83;
 
+var counter = 0;
+
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -14,11 +16,8 @@ var Enemy = function() {
     this.pos2 = 1.5*height; 
     this.pos3 = 2.5*height;
 
-    this.x = 0; //this.x-width;
-    this.y = this.pos3;
-
-    
-    
+    this.x = -10; //this.x-width;
+    this.y = this.pos3;   
 };
 
 // Update the enemy's position, required method for game
@@ -27,9 +26,13 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    window.setTimeout(function(){
+    
+    this.x = this.x + (250*dt);
 
-    },1000);
+    if(this.x>505)
+    {
+        this.x = -102;
+    }
 
 };
 
@@ -134,7 +137,7 @@ Player.prototype.handleInput = function(key){
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [];
-for(var i=0; i<60; i++){
+for(var i=0; i<1; i++){
     allEnemies.push(new Enemy());
 }
 
