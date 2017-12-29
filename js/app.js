@@ -30,8 +30,31 @@ Enemy.prototype.update = function(dt) {
     this.x = this.x + (250*dt);
 
     if(this.x>505)
-    {
-        this.x = -102;
+    {         
+        switch(Math.floor((Math.random()*3)+1))
+        {
+            case 1:
+            {
+                this.y = this.pos1;
+                this.x = -102;
+                break;
+            }
+            case 2:
+            {
+                this.y = this.pos2;
+                this.x = -204;
+                break;
+            }
+            case 3:
+            {
+                this.y = this.pos3;
+                this.x = -306;
+                break;
+            }
+            default:break;
+
+        }
+        
     }
 
 };
@@ -137,7 +160,7 @@ Player.prototype.handleInput = function(key){
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [];
-for(var i=0; i<1; i++){
+for(var i=0; i<2; i++){
     allEnemies.push(new Enemy());
 }
 
