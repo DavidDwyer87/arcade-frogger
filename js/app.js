@@ -173,7 +173,7 @@ var Player = function(){
         switch(direction){
             case "vertical":
             {
-                if(value>=0 && value<=5){
+                if(value>=1 && value<=5){
                     return true;
                 }
                 break;
@@ -210,6 +210,12 @@ Player.prototype.location = function(){
     return collision;
 }
 
+Player.prototype.reset = function()
+{
+    this.row = 5;    
+    this.col = 2; 
+}
+
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -236,18 +242,20 @@ document.addEventListener('keyup', function(e) {
 
 function checkCollisions()
 {   
+    var flag = false;
+
     allEnemies.forEach(function(enemy){
         var epos = enemy.location();       
         var ppos = player.location();     
 
-        //console.log(epos.row+' '+ppos.row);
-
         if(epos.col ==ppos.col && epos.row == ppos.row)
         {
-            console.log('hit!!!');
+           flag = true;
         }
         
     });    
+
+    return flag;
 }
 
 
