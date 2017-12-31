@@ -1,6 +1,6 @@
 var width = 101;
-var height = 83;
-var min_height = 43;
+var height = 73; //player height
+var eheight = 93; //ememy height
 
 var counter = 0;
 
@@ -13,12 +13,13 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     
-    this.pos1 = 0.5*height;
-    this.pos2 = 1.5*height; 
-    this.pos3 = 2.5*height;
+    this.pos1 = 0.5*eheight;
+    this.pos2 = 1.5*eheight; 
+    this.pos3 = 2.5*eheight;
 
-    this.x = -10; //this.x-width;
+    this.x = -10; 
     this.y = this.pos3;   
+    
 };
 
 // Update the enemy's position, required method for game
@@ -41,18 +42,21 @@ Enemy.prototype.update = function(dt) {
             {
                 this.y = this.pos1;
                 this.x = -102;
+                
                 break;
             }
             case 2:
             {
                 this.y = this.pos2;
                 this.x = -306;
+                
                 break;
             }
             case 3:
             {
                 this.y = this.pos3;
                 this.x = -506;
+                
                 break;
             }
             default:break;
@@ -67,7 +71,50 @@ Enemy.prototype.render = function() {
 };
 
 Enemy.prototype.location = function(){
-    var collision = {x:this.x,y:this.y};
+    var collision = {row:0,col:0};
+
+    if(this.x>=0 && this.x<=width)
+    {
+        collision.col = 0;
+    }
+    else if(this.x>=width && this.x<=(width*2))
+    {
+        collision.col = 1;
+    }
+    else if(this.x>=(width*2) && this.x<=(width*3))
+    {
+        collision.col = 2;
+    }
+    else if(this.x>=(width*3) && this.x<=(width*4))
+    {
+        collision.col = 3;
+    }
+    else if (this.x>=(width*4) && this.x<=(width*5)) 
+    {
+        collision.col = 4;
+    }
+
+    switch(this.y)
+    {
+        case this.pos1:
+        {
+            collision.row = 1;
+            break;
+        }
+        
+        case this.pos2:
+        {
+            collision.row = 2;
+            break;
+        }
+
+        case this.pos3:
+        {
+            collision.row = 3;
+            break;
+        }
+    }
+
     return collision;
 }
 
@@ -147,7 +194,7 @@ var Player = function(){
 
 Player.prototype.update = function(){
     this.x = this.col*width;
-    this.y = this.row*height;
+    this.y = this.row*height;   
 };
 
 Player.prototype.render = function(){
@@ -159,7 +206,7 @@ Player.prototype.handleInput = function(key){
 };
 
 Player.prototype.location = function(){
-    var collision = {x:this.x,y:this.y};
+    var collision = {row:this.row,col:this.col};
     return collision;
 }
 
@@ -191,15 +238,15 @@ function checkCollisions()
 {   
     allEnemies.forEach(function(enemy){
         var epos = enemy.location();       
-        var ppos = player.location();
+        var ppos = player.location();     
 
-        if(epos.x>=ppos.x && epos.x<=(ppos.x+width))
+        //console.log(epos.row+' '+ppos.row);
+
+        if(epos.col ==ppos.col && epos.row == ppos.row)
         {
-            if(epos.y>=ppos.y && epos.y<=(ppos.y+height))
-            {
-                console.log('lose!!!');
-            }   
-        }    
+            console.log('hit!!!');
+        }
+        
     });    
 }
 
