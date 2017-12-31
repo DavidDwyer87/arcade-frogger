@@ -1,5 +1,6 @@
 var width = 101;
 var height = 83;
+var min_height = 43;
 
 var counter = 0;
 
@@ -27,8 +28,11 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     
+    //move bugs
     this.x = this.x + (250*dt);
 
+
+    //reset bugs
     if(this.x>505)
     {         
         switch(Math.floor((Math.random()*3)+1))
@@ -42,21 +46,19 @@ Enemy.prototype.update = function(dt) {
             case 2:
             {
                 this.y = this.pos2;
-                this.x = -204;
+                this.x = -306;
                 break;
             }
             case 3:
             {
                 this.y = this.pos3;
-                this.x = -306;
+                this.x = -506;
                 break;
             }
             default:break;
 
-        }
-        
+        }        
     }
-
 };
 
 // Draw the enemy on the screen, required method for game
@@ -64,18 +66,19 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.location = function(){
+    var collision = {x:this.x,y:this.y};
+    return collision;
+}
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function(){
     this.sprite = 'images/char-boy.png';
     
-    this.row = 2;   
-    this.col = 5;
-    
-
-    this.x = this.row*width;
-    this.y = this.col*height;
+    this.row = 5; //value controls the y axis default 2   
+    this.col = 2; //value controls the x axis default 5   
 
     this.validate = function(direction){       
 
@@ -83,32 +86,32 @@ var Player = function(){
         {
             case 'left':
             {
-                if(this.boardBoundries('horizontal',(this.row-1))){
-                    this.row--;                   
+                if(this.boardBoundries('horizontal',(this.col-1))){
+                    this.col--;                   
                 }                          
                     
                 break;
             }
             case 'up':
             {                
-                if (this.boardBoundries('vertical',(this.col-1))) {
-                    this.col--;                      
+                if (this.boardBoundries('vertical',(this.row-1))) {
+                    this.row--;                      
                 }
                             
                 break;
             }
             case 'down':
             {
-                if(this.boardBoundries('vertical',(this.col+1))){
-                    this.col++;            
+                if(this.boardBoundries('vertical',(this.row+1))){
+                    this.row++;            
                 }
                            
                 break;
             }
             case 'right':
             {            
-                if(this.boardBoundries('horizontal',(this.row+1))){
-                    this.row++;                     
+                if(this.boardBoundries('horizontal',(this.col+1))){
+                    this.col++;                     
                 }
                 
                 break;
@@ -143,8 +146,8 @@ var Player = function(){
 };
 
 Player.prototype.update = function(){
-    this.x = this.row*width;
-    this.y = this.col*height;    
+    this.x = this.col*width;
+    this.y = this.row*height;
 };
 
 Player.prototype.render = function(){
@@ -152,8 +155,13 @@ Player.prototype.render = function(){
 };
 
 Player.prototype.handleInput = function(key){
-    this.validate(key);
+    this.validate(key);    
 };
+
+Player.prototype.location = function(){
+    var collision = {x:this.x,y:this.y};
+    return collision;
+}
 
 
 // Now instantiate your objects.
@@ -179,7 +187,21 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
+function checkCollisions()
+{   
+    allEnemies.forEach(function(enemy){
+        var epos = enemy.location();       
+        var ppos = player.location();
 
+        if(epos.x>=ppos.x && epos.x<=(ppos.x+width))
+        {
+            if(epos.y>=ppos.y && epos.y<=(ppos.y+height))
+            {
+                console.log('lose!!!');
+            }   
+        }    
+    });    
+}
 
 
 
