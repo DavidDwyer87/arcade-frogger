@@ -20,7 +20,7 @@ var Engine = (function(global) {
      */
     var doc = global.document,
         win = global.window,
-        canvas = doc.createElement('canvas'),
+        canvas = doc.getElementById('game'),//doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
 
@@ -29,7 +29,7 @@ var Engine = (function(global) {
 
     canvas.width = 505;
     canvas.height = 606;
-    doc.body.appendChild(canvas);
+    //doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -84,8 +84,7 @@ var Engine = (function(global) {
         updateEntities(dt);
 
         if(checkCollisions())
-        {
-            //console.log('reset');
+        {            
             reset(); //reset player position
         }
     }

@@ -1,3 +1,26 @@
 body {
-    text-align: center;
+   
+}
+
+header{
+	margin-top: 60px;
+	text-align: center;
+}
+
+.column-layout{	
+	padding: 5px;
+	display: flex;
+	justify-content: center;
+}
+
+.game-character{	
+	order: 2;
+	padding-left: 40px;	
+}
+
+.game-container{
+	max-width: 505px;
+    max-height: 606px;    
+	order: 1;
+	flex: 2;
 }
