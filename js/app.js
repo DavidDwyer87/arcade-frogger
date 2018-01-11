@@ -5,7 +5,7 @@ var eheight = 93; //ememy height
 var counter = 0;
 var character = 'images/char-boy.png';
 var second,minute,hour;
-var image,time;
+var image,time,timerFlag=false;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -131,53 +131,67 @@ var Timer = function(){
 
 Timer.prototype.event = window.setInterval(function(){
 
-     second++;
+    if(timerFlag)
+    {
+        second++;
 
-     var minuteTxt = "00";
-     var hourTxt = "00";
-     var secondTxt = "00";
-    
-     if (second==60)
-     {
-        second = 0;
-        this.minute++;
-        if(this.minute == 60)
+        var minuteTxt = "00";
+        var hourTxt = "00";
+        var secondTxt = "00";
+        
+        if (second==60)
         {
-            this.minute = 0;
-            hour++;
+           second = 0;
+           this.minute++;
+           if(this.minute == 60)
+            {
+                this.minute = 0;
+                hour++;
+            }
         }
-     }
 
-     if(second <10){
-        secondTxt = "0"+second;
-     }
-     else if(second>=10)
-     {
-        secondTxt = second;
-     }
+        if(second <10){
+           secondTxt = "0"+second;
+        }
+        else if(second>=10)
+        {
+           secondTxt = second;
+        }
 
-     if(this.minute==0 || this.minute<10){
-        minuteTxt = "0"+this.minute
-     }
-     else
-     {
-        minuteTxt = this.minute;
-     }
+        if(this.minute==0 || this.minute<10){
+           minuteTxt = "0"+this.minute
+        }
+        else
+        {
+           minuteTxt = this.minute;
+        }
 
-     if (this.hour==0 || this.hour<10) 
-     {
-        hourTxt = "0"+this.hour;
-     }
-    
-    var time = hourTxt+":"+minuteTxt+":"+secondTxt;
-     
-     //update UI
-     $('#time').html(time);
-},1000)
+        if (this.hour==0 || this.hour<10) 
+        {
+           hourTxt = "0"+this.hour;
+        }
+        
+        var time = hourTxt+":"+minuteTxt+":"+secondTxt;
+         
+         //update UI
+         $('#time').html(time);
+    }     
+},1000);
 
 
 Timer.prototype.reset = function(){
      $('#time').html('00:00:00');
+     second = 0;
+     minute = 0;
+     hour = 0;
+}
+
+Timer.prototype.stop = function(){
+    timerFlag = false;
+}
+
+Timer.prototype.start = function(){
+    timerFlag = true;
 }
 
 // Now write your own player class
@@ -187,6 +201,19 @@ var Player = function(){
     
     this.row = 5; //value controls the y axis default 2   
     this.col = 2; //value controls the x axis default 5   
+
+    this.playerTimer = function(row){
+        if(row>=1 && row<=3) // location for where the ememies are. this location start the timer
+        {
+            timer.start();  //start timer when player is on stones 
+        }
+        else
+        {
+            timer.stop(); //stop timer when player is on grass
+        }
+
+        console.log(row);
+    };
 
     this.validate = function(direction){       
 
@@ -203,7 +230,8 @@ var Player = function(){
             case 'up':
             {                
                 if (this.boardBoundries('vertical',(this.row-1))) {
-                    this.row--;                      
+                    this.row--;   
+                    this.playerTimer(this.row);
                 }
                             
                 break;
@@ -212,6 +240,7 @@ var Player = function(){
             {
                 if(this.boardBoundries('vertical',(this.row+1))){
                     this.row++;            
+                    this.playerTimer(this.row);
                 }
                            
                 break;
@@ -227,8 +256,7 @@ var Player = function(){
 
             default:break;
         };
-
-        new Timer();                  
+                 
     };
 
     this.boardBoundries = function(direction,value){
@@ -252,9 +280,10 @@ var Player = function(){
         }
 
         return false;
-    }
+    };
 
-    time = new Timer();
+    // initalize timer constructure
+    timer = new Timer();   
 }
 
 Player.prototype.update = function(){
@@ -317,6 +346,9 @@ function checkCollisions(){
 
         if(epos.col==ppos.col && epos.row == ppos.row)
         {
+           timer.stop();
+           timer.reset();
+
            flag = true;
         }
         
@@ -325,10 +357,11 @@ function checkCollisions(){
     return flag;
 }
 
+// function containing procedure to change player
 function selectCharactor(char,name){
-    character = char;
-    $('#profile').attr('src',char);
-    $('#name').html(name);   
-    player.render();
-    $('.close').click();
+    character = char; //set character image location 
+    $('#profile').attr('src',char); // change profile image of player
+    $('#name').html(name);  // change name of player on the player panel  
+    player.render(); // render new player image on the game canvas
+    $('.close').click(); //close the modal box
 }
