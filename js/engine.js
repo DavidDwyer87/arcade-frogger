@@ -20,16 +20,14 @@ var Engine = (function(global) {
      */
     var doc = global.document,
         win = global.window,
-        canvas = doc.getElementById('game'),//doc.createElement('canvas'),
+        canvas = doc.getElementById('game'),
         ctx = canvas.getContext('2d'),
         lastTime;
-
-    
+        
     global.player = player;
 
     canvas.width = 505;
     canvas.height = 606;
-    //doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -66,6 +64,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
+        
         reset();
         lastTime = Date.now();
         main();

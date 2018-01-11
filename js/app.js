@@ -3,9 +3,13 @@ var height = 73; //player height
 var eheight = 93; //ememy height
 
 var counter = 0;
+var character = 'images/char-boy.png';
+var second,minute,hour;
+var image,time;
 
 // Enemies our player must avoid
 var Enemy = function() {
+
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
@@ -18,13 +22,13 @@ var Enemy = function() {
     this.pos3 = 2.5*eheight;
 
     this.x = -10; 
-    this.y = this.pos3;   
-    
-};
+    this.y = this.pos3;           
+}
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
+
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
@@ -63,14 +67,15 @@ Enemy.prototype.update = function(dt) {
 
         }        
     }
-};
+}
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+}
 
 Enemy.prototype.location = function(){
+
     var collision = {row:0,col:0};
 
     if(this.x>=0 && this.x<=width)
@@ -118,11 +123,67 @@ Enemy.prototype.location = function(){
     return collision;
 }
 
+var Timer = function(){
+    hour = 0;
+    minute = 0;
+    second = 0;
+}
+
+Timer.prototype.event = window.setInterval(function(){
+
+     second++;
+
+     var minuteTxt = "00";
+     var hourTxt = "00";
+     var secondTxt = "00";
+    
+     if (second==60)
+     {
+        second = 0;
+        this.minute++;
+        if(this.minute == 60)
+        {
+            this.minute = 0;
+            hour++;
+        }
+     }
+
+     if(second <10){
+        secondTxt = "0"+second;
+     }
+     else if(second>=10)
+     {
+        secondTxt = second;
+     }
+
+     if(this.minute==0 || this.minute<10){
+        minuteTxt = "0"+this.minute
+     }
+     else
+     {
+        minuteTxt = this.minute;
+     }
+
+     if (this.hour==0 || this.hour<10) 
+     {
+        hourTxt = "0"+this.hour;
+     }
+    
+    var time = hourTxt+":"+minuteTxt+":"+secondTxt;
+     
+     //update UI
+     $('#time').html(time);
+},1000)
+
+
+Timer.prototype.reset = function(){
+     $('#time').html('00:00:00');
+}
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(){
-    this.sprite = 'images/char-boy.png';
+var Player = function(){   
     
     this.row = 5; //value controls the y axis default 2   
     this.col = 2; //value controls the x axis default 5   
@@ -165,7 +226,9 @@ var Player = function(){
             }
 
             default:break;
-        };             
+        };
+
+        new Timer();                  
     };
 
     this.boardBoundries = function(direction,value){
@@ -190,37 +253,41 @@ var Player = function(){
 
         return false;
     }
-};
+
+    time = new Timer();
+}
 
 Player.prototype.update = function(){
     this.x = this.col*width;
     this.y = this.row*height;   
-};
+}
 
 Player.prototype.render = function(){
-    ctx.drawImage(Resources.get(this.sprite),this.x,this.y);
-};
+    image = new Image();
+    image.src = character;
+    ctx.drawImage(image,this.x,this.y);
+}
 
 Player.prototype.handleInput = function(key){
     this.validate(key);    
-};
+}
 
 Player.prototype.location = function(){
+
     var collision = {row:this.row,col:this.col};
     return collision;
 }
 
-Player.prototype.reset = function()
-{
+Player.prototype.reset = function(){
     this.row = 5;    
     this.col = 2; 
 }
-
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [];
+
 for(var i=0; i<2; i++){
     allEnemies.push(new Enemy());
 }
@@ -240,15 +307,15 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
-function checkCollisions()
-{   
+function checkCollisions(){
+
     var flag = false;
 
     allEnemies.forEach(function(enemy){
         var epos = enemy.location();       
         var ppos = player.location();     
 
-        if(epos.col ==ppos.col && epos.row == ppos.row)
+        if(epos.col==ppos.col && epos.row == ppos.row)
         {
            flag = true;
         }
@@ -258,5 +325,10 @@ function checkCollisions()
     return flag;
 }
 
-
-
+function selectCharactor(char,name){
+    character = char;
+    $('#profile').attr('src',char);
+    $('#name').html(name);   
+    player.render();
+    $('.close').click();
+}
