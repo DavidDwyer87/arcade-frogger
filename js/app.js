@@ -5,7 +5,9 @@ var eheight = 93; //ememy height
 var counter = 0;
 var character = 'images/char-boy.png';
 var second,minute,hour,seconds;
-var image,timer=null,timerFlag=false,timeObj=null;
+var image,timer=null,timerFlag=false;
+
+var bestTime = 0;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -197,68 +199,6 @@ Timer.prototype.start = function(){
     timerFlag = true;
 }
 
-//store time data for best time calculation.
-Timer.prototype.storeTime = function(time){
-    
-    // Check browser support
-    if (typeof(Storage) !== "undefined") {
-        
-        // Retrieve
-        var timeData = window.sessionStorage.getItem("bestTime");
-        
-        console.log(timeData);
-        if (timeData !== null) {
-                
-            if(time.TimeInSeconds>timeData.TimeInSeconds)
-            {
-                // Store
-                window.sessionStorage.setItem("bestTime", time); 
-                $('bestTime').html(time.FormattedTime);   
-            }
-        }
-        else
-        {
-            console.log(typeof(timeData.TimeInSeconds));
-            
-            // Store
-            window.sessionStorage.setItem("bestTime", time);
-            $('bestTime').html(time.FormattedTime);
-        }
-        
-    } else {
-        alert("Sorry, your browser does not support Web Storage...");
-    }
-}
-
-//get best time
-Timer.prototype.getStoredTime = function(){
-    
-    // Check browser support
-    if (typeof(Storage) !== "undefined"){
-        
-        // Retrieve
-        if(window.sessionStorage.getItem("bestTime")!=null){
-            timeObj = window.sessionStorage.getItem("bestTime");    
-            alert(timeObj.toString()+'yes');
-        }
-        else
-        {
-            alert(timeObj+'no');
-            window.sessionStorage.setItem('bestTime',timeObj);
-        }       
-
-        if (timeObj.FormattedTime == null || timeObj.FormattedTime == 'undefined' || timeObj.FormattedTime == '') {
-            $('#time').html('00:00:00');
-        }
-        else{
-            $('#bestTime').html(timeObj.formattedTime);
-        }
-        
-    }else {
-        alert("Sorry, your browser does not support Web Storage...");
-    }
-}
-
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -343,15 +283,10 @@ var Player = function(){
         }
 
         return false;
-    };
-
-    //create time object for storage and query for best time
-    timeData = new Object();
-    var timeObj = {FormattedTime:'00:00:00',TimeInSeconds:''};
+    };   
 
     // initalize timer constructure
     timer = new Timer(); 
-    timer.getStoredTime();
 }
 
 Player.prototype.update = function(){
@@ -417,14 +352,15 @@ function checkCollisions(){
         {
            timer.stop(); //stop timer 
            
-           //create time object for storage and query for best time
-           timeObj.FormattedTime=$('#time').html();
-           timeObj.TimeInSeconds=seconds;
+            if(seconds>bestTime) //log the best time
+            {      
+                console.log(seconds);
+                bestTime = seconds          
+                $('#bestTime').html( $('#time').html());   
+            }      
            
-
-           timer.storeTime(timeObj); //store time 
-           timer.reset(); //reset time
-           flag = true; //there was a collision
+            timer.reset(); //reset time
+            flag = true; //there was a collision
         }
         
     });    
