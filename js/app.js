@@ -305,7 +305,6 @@ Player.prototype.handleInput = function(key){
 }
 
 Player.prototype.location = function(){
-
     var collision = {row:this.row,col:this.col};
     return collision;
 }
@@ -324,7 +323,7 @@ for(var i=0; i<2; i++){
     allEnemies.push(new Enemy());
 }
 
-var player = new Player();
+var player = new Player(); // player instances
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -336,7 +335,7 @@ document.addEventListener('keyup', function(e) {
         40: 'down'
     };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+    player.handleInput(allowedKeys[e.keyCode]); //pass input to players function
 });
 
 function checkCollisions(){
